@@ -1,0 +1,32 @@
+#!/bin/bash
+set -x
+
+killcount=0
+for i in `pidof -x clicker`
+do
+	if [[ $i == $$ ]]
+	then
+		continue
+	else
+		killcount=$killcount+1
+	fi
+
+done
+
+if [[ $killcount > 0 ]]
+then
+	for i in `pidof -x clicker`
+	do
+		if [[ $i == $$ ]]
+	        then
+	                continue
+	        else
+			kill $i
+		fi
+	done
+
+	killall xdotool
+	killall clicker
+else
+	while true; do xdotool click --repeat 1000 --delay 10 1; done
+fi
