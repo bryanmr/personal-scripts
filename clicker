@@ -1,5 +1,20 @@
 #!/bin/bash
-set -x
+
+function DoClick {
+       if [[ "$(wmctrl -l | grep `printf '0x0%x' $windowid` | cut -b19-1000)" == "Realm Grinder" ]]
+       then
+               while true
+               do
+                       xdotool mousemove --sync --window $windowid 800 300 click --repeat 1000 --delay 200 1
+               done
+       elif [[ "$(wmctrl -l | grep `printf '0x0%x' $windowid` | cut -b19-1000)" == "Crush Crush" ]] # I run Crush Crush in 1440x900
+       then
+               while true
+               do
+                       xdotool mousemove --window $windowid 900 290 click 1 mousemove --window $windowid 1000 290 click 1 --repeat 100
+               done
+       fi
+}
 
 killcount=0
 for i in `pidof -x clicker`
@@ -29,20 +44,10 @@ then
 	killall clicker
 else
 	windowid=`xdotool getactivewindow`
-	if [[ "$(wmctrl -l | grep `printf '0x0%x' $windowid` | cut -b19-1000)" == "Realm Grinder" ]]
-	then
-		while true
-		do
-			xdotool mousemove --sync --window $windowid 800 300 click --repeat 1000 --delay 200 1
-		done
-	elif [[ "$(wmctrl -l | grep `printf '0x0%x' $windowid` | cut -b19-1000)" == "Crush Crush" ]] # I run Crush Crush in 1440x900
-	then
-		while true
-		do
-			xdotool mousemove --window $windowid 900 290 click 1 mousemove --window $windowid 1000 290 click 1 --repeat 5 --delay 5
-		done
-	else
-		zenity --info --text "No clicker windows recognized" --title "Not Found"
-		#while true; do xdotool click --repeat 1000 --delay 10 1; done
-	fi
+	DoClick
+	windowid=`xdotool selectwindow`
+	DoClick
+        zenity --info --text "No clicker windows recognized" --title "Not Found"
+        exit
+        #while true; do xdotool click --repeat 1000 --delay 10 1; done
 fi
