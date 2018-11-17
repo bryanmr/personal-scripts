@@ -1,0 +1,18 @@
+
+exit
+
+case $1 in
+  pre)
+	killall steam
+	sudo -u bryan bash -c "export DISPLAY=:0 ; xdotool keydown Alt key o keyup Alt"
+	sleep 5
+	killall -9 steam
+	sleep 1
+    ;;
+  post)
+	sleep 4
+	sudo -u bryan bash -c "export DISPLAY=:0 ; xdotool keydown Alt key o keyup Alt"
+	sleep 1
+	sudo -u bryan bash -c "export DISPLAY=:0 ; xdotool keydown Alt key s keyup Alt"
+    ;;
+esac

@@ -28,5 +28,14 @@ then
 	killall xdotool
 	killall clicker
 else
-	while true; do xdotool click --repeat 1000 --delay 10 1; done
+	windowid=`xdotool selectwindow`
+	if [[ "$(wmctrl -l | grep `printf '0x0%x' $windowid` | cut -b19-1000)" == "Realm Grinder" ]]
+	then
+		while true
+		do
+			xdotool mousemove --window $windowid 800 300 click --repeat 1000 --delay 200 1
+		done
+	else
+		while true; do xdotool click --repeat 1000 --delay 10 1; done
+	fi
 fi
