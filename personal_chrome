@@ -1,4 +1,13 @@
 #!/bin/bash
+
+# If Chrome is already running, raise it instead
+if [[ "$(wmctrl -l | grep -o Chromium)" == "Chromium" ]]
+then
+	wmctrl -R Chromium
+	echo Raised the Chromium window
+	exit
+fi
+
 cd ~/Documents
 if [[ "`ls -a | grep -o .chromiumprofile | head -n1`" == ".chromiumprofile" ]]
 then
@@ -51,6 +60,8 @@ then
 fi
 
 rm -rf .hidden_chromium
+
+zenity --info --text "Everything has been encrypted." --title "Finished"
 
 #echo "type \"y\" to delete the unencrypted chromium profile (.hidden_chromium)"
 #read stopstop
