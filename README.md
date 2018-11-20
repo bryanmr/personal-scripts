@@ -1,3 +1,5 @@
+# Random scripts I write
+
 You'll need xdotool and wmctrl to use these scripts.
 
 I encrypt my Chromium install since it is the only thing that I really care about on my PC. This gives it an added layer of security.
