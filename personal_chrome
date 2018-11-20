@@ -20,22 +20,12 @@ then
 		exit
 	fi
 
-#	echo type "y" to delete the encrypted source file
-#	read gogo
-#	if [[ "$gogo" == "y" ]]
-#	then
-#		rm -f .chromiumprofile
-#		echo Deleted .chromiumprofile
-#	fi
 elif [[ "`ls -a | grep .hidden_chromium`" == ".hidden_chromium" ]]
 then
 	echo "Odd, the directory isn't encrypted, we'll just pretend we didn't see this."
 	zenity --no-wrap --error --text="Somehow things were left unencrypted. Did the script exit normally?" --title="Warning!"
 else
 	echo No profile found. Creating a new Chromium profile.
-#	echo The profile is missing, exiting to avoid damage.
-#	zenity --no-wrap --error --text="I can't find the profile. Someday I will have logic to make the profile here." --title="Profile Not Found!"
-#	exit
 fi
 
 chromium-browser --user-data-dir=.hidden_chromium/
@@ -54,21 +44,10 @@ rm -rf .hidden_chromium/*/Service\ Worker/CacheStorage
 rm -rf .hidden_chromium/ShaderCache
 rm -rf .hidden_chromium/*/Application\ Cache
 
-gnome-terminal -- sh -c "cd ~/Documents ; gpg-zip -c -o .chromiumprofile .hidden_chromium/ && rm -rf .hidden_chromium"
+gnome-terminal -- sh -c 'echo "Encrypting the Chromium profile" ; cd ~/Documents && gpg-zip -c -o .chromiumprofile .hidden_chromium/ && rm -rf .hidden_chromium'
 
-#if [[ $? -ne 0 ]]
-#then
-#	echo "WTF, you messed up creating the file? We'll bail out of here so you don't break anything..."
-#	zenity --no-wrap --error --text="Creation of the encrypted tarball failed. User Action is Required to Recover." --title="Fatal Error!"
-#	exit
-#fi
-#
-#rm -rf .hidden_chromium
-#
-#echo "type \"y\" to delete the unencrypted chromium profile (.hidden_chromium)"
-#read stopstop
-#if [[ "$stopstop" == "y" ]]
-#then
-#	rm -rf .hidden_chromium
-#	echo Deleted .hidden_chromium
-#fi
+if [ -f .hidden_chromium ]
+then
+	echo Unencrypted profile still present, something went wrong
+	zenity --no-wrap --error --text="Chromium not encrypted! Something went wrong!" --title="Encryption failed!"
+fi
