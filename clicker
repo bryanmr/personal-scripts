@@ -1,25 +1,28 @@
 #!/bin/bash
 
 function DoClick {
-       if [[ "$(wmctrl -l | grep `printf '0x0%x' $windowid` | cut -b19-1000)" == "Realm Grinder" ]]
+	if [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Realm Grinder" ]]
        then
                while true
                do
-                       xdotool mousemove --sync --window $windowid 800 300 click --repeat 1000 --delay 200 1
+                       xdotool mousemove --sync --window "$windowid" 810 310 click --repeat 100 --delay 200 1 \
+                               mousemove --sync --window "$windowid" 800 300 click --repeat 100 --delay 200 1
                done
-       elif [[ "$(wmctrl -l | grep `printf '0x0%x' $windowid` | cut -b19-1000)" == "Crush Crush" ]] # I run Crush Crush in 1440x900
+       elif [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Crush Crush" ]] # I run Crush Crush in 1440x900
        then
                while true
                do
-                       xdotool mousemove --window $windowid 900 290 click 1 mousemove --window $windowid 1000 290 click 1 --repeat 100
+                       xdotool mousemove --window "$windowid" 900 290 click 1 \
+			       mousemove --window "$windowid" 400 625 click 1 \
+			       mousemove --window "$windowid" 1350 290 click 1 --repeat 100
                done
        fi
 }
 
 killcount=0
-for i in `pidof -x clicker`
+for i in $(pidof -x clicker)
 do
-	if [[ $i == $$ ]]
+	if [[ $i == "$$" ]]
 	then
 		continue
 	else
@@ -28,24 +31,24 @@ do
 
 done
 
-if [[ $killcount > 0 ]]
+if [[ $killcount -gt 0 ]]
 then
-	for i in `pidof -x clicker`
+	for i in $(pidof -x clicker)
 	do
-		if [[ $i == $$ ]]
+		if [[ $i == "$$" ]]
 	        then
 	                continue
 	        else
-			kill $i
+			kill "$i"
 		fi
 	done
 
 	killall xdotool
 	killall clicker
 else
-	windowid=`xdotool getactivewindow`
+	windowid=$(xdotool getactivewindow)
 	DoClick
-	windowid=`xdotool selectwindow`
+	windowid=$(xdotool selectwindow)
 	DoClick
         zenity --info --text "No clicker windows recognized" --title "Not Found"
         exit

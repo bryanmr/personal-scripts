@@ -8,19 +8,18 @@ then
 	exit
 fi
 
-cd ~/Documents
-if [[ "`ls -a | grep -o .chromiumprofile | head -n1`" == ".chromiumprofile" ]]
+cd ~/Documents || exit
+if [ -f .chromiumprofile ]
 then
 	echo Decrypting the directory
-	gpg-zip -d .chromiumprofile
-	if [[ $? -ne 0 ]]
+	if ! gpg-zip -d .chromiumprofile
 	then
 		echo Holy shit, something went wrong. Run the program again and type the password correctly? For a start? Maybe.
 		zenity --no-wrap --error --text="Either a corrupted tarball or an incorrect password. Copy .chromiumprofile~ to .chromiumprofile to resolve." --title="The extraction has failed!"
 		exit
 	fi
 
-elif [[ "`ls -a | grep .hidden_chromium`" == ".hidden_chromium" ]]
+elif [ -f .hidden_chromium ]
 then
 	echo "Odd, the directory isn't encrypted, we'll just pretend we didn't see this."
 	zenity --no-wrap --error --text="Somehow things were left unencrypted. Did the script exit normally?" --title="Warning!"
