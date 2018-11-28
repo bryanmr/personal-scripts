@@ -1,0 +1,9 @@
+#!/bin/bash
+# https://github.com/ValveSoftware/steam-for-linux/issues/4351
+
+echo "Flipping in OpenGL can make operations require no memory moves, but it causes flickering when streaming."
+
+#nvidia-settings --query AllowFlipping
+nvidia-settings --assign="AllowFlipping=0"
+
+echo "Working around the flicker bug when streaming via Steam"
