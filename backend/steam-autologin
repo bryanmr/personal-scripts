@@ -26,7 +26,7 @@ windowid=$(xdotool getactivewindow)
 # Check if active window is steam
 # Sleep and then try to raise it if it is not
 # Try 5 times
-for i in `seq 1 5`
+for i in $(seq 1 5)
 do
 	if [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Steam" ]]
 	then
