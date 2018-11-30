@@ -6,23 +6,33 @@
 steam &
 
 # We wait for Steam network to come up
-while ! netstat -lp 2>&1 | grep -i steam > /dev/null
+# Try 5 times
+for i in $(seq 1 5)
 do
-	sleep 2
-	echo "Steam not started yet (Steam network ports not reserved)"
+	if ! netstat -lp 2>&1 | grep -i steam > /dev/null
+	then
+		sleep 2
+		echo "Steam not started yet (Steam network ports not reserved)"
+	fi
 done
 
 sleep 1
 
-# Raise Steam window and then check what window is active
+# Raise Steam window and then store which window is active
 wmctrl -a Steam
 sleep .5
 windowid=$(xdotool getactivewindow)
 
 # Check if active window is steam
 # Sleep and then try to raise it if it is not
-while [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" != "Steam" ]]
+# Try 5 times
+for i in `seq 1 5`
 do
+	if [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Steam" ]]
+	then
+		break # Steam is raised
+	fi
+
 	sleep 1
 	echo "Steam window not available or not raised"
 	wmctrl -a Steam
@@ -30,6 +40,13 @@ do
 	windowid=$(xdotool getactivewindow)
 done
 
-# Send two Return keystrokes
+# Check if the active window is Steam
+# If true, send two Return keystrokes
 # One to skip intro, one to login first account
-xdotool key --delay 1000 Return key Return
+if [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Steam" ]]
+then
+	xdotool key --window "$windowid" --delay 1000 --window "$windowid" Return key Return
+	echo "Script done, you should be logged in!"
+else
+	echo "Something went wrong, not doing anything!"
+fi
