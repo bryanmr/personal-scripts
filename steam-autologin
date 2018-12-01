@@ -6,8 +6,8 @@
 steam &
 
 # We wait for Steam network to come up
-# Try 5 times
-for i in $(seq 1 5)
+# Try 30 times, since we might wait for an update
+for i in $(seq 1 30)
 do
 	if ! netstat -lp 2>&1 | grep -i steam > /dev/null
 	then
@@ -25,8 +25,8 @@ windowid=$(xdotool getactivewindow)
 
 # Check if active window is steam
 # Sleep and then try to raise it if it is not
-# Try 5 times
-for i in $(seq 1 5)
+# Try 15 times
+for i in $(seq 1 15)
 do
 	if [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Steam" ]]
 	then
