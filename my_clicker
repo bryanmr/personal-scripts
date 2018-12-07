@@ -13,8 +13,8 @@ function DoClick {
                while true
                do
                        xdotool mousemove --window "$windowid" 900 290 click 1 \
-			       mousemove --window "$windowid" 400 625 click 1 \
-			       mousemove --window "$windowid" 1350 290 click 1 --repeat 100
+			       #mousemove --window "$windowid" 400 625 click 1 \
+			       #mousemove --window "$windowid" 1350 290 click 1 --repeat 5
                done
        fi
 }
