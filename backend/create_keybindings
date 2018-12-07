@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Location of custom keybindings in Gnome
+LOCATION="/org/gnome/settings-daemon/plugins/media-keys/"
+
+cat keybinds.dump | dconf load $LOCATION

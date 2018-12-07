@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Location of custom keybindings in Gnome
+LOCATION="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/"
+
+for i in $(dconf list $LOCATION)
+do
+	for y in $(dconf list ${LOCATION}${i})
+	do
+		dconf read ${LOCATION}${i}${y}
+	done
+	echo "-------"
+done

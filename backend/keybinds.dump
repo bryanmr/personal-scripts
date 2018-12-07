@@ -1,0 +1,32 @@
+[/]
+custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/']
+
+[custom-keybindings/custom2]
+binding='<Alt>s'
+command='steam-autologin'
+name='Steam'
+
+[custom-keybindings/custom5]
+binding='<Alt>c'
+command='my_clicker'
+name='Clicker'
+
+[custom-keybindings/custom1]
+binding='<Alt>b'
+command='my_xrandr both'
+name='Two Monitors'
+
+[custom-keybindings/custom4]
+binding='<Alt>d'
+command='my_xrandr dvi_only'
+name='DVI Monitor'
+
+[custom-keybindings/custom0]
+binding='<Alt>o'
+command='my_xrandr hdmi_only'
+name='Only One Monitor'
+
+[custom-keybindings/custom3]
+binding='<Alt>p'
+command='my_xrandr both_one_portrait'
+name='Two monitors, one portrait'
