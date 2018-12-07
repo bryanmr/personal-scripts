@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Runs a script that uses a single monitor
-my_xrandr hdmi_only
-
 # Assumes Steam starts in Big Picture
 # Requires wmctrl and xdotool to be installed
 
@@ -18,6 +15,9 @@ do
 		echo "Steam not started yet (Steam network ports not reserved)"
 	fi
 done
+
+# Runs a script that uses a single monitor
+my_xrandr hdmi_only
 
 sleep 1
 
