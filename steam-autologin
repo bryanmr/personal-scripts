@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Runs a script that uses a single monitor
+my_xrandr hdmi_only
+
 # Assumes Steam starts in Big Picture
 # Requires wmctrl and xdotool to be installed
 
