@@ -1,0 +1,26 @@
+#!/bin/bash
+
+DVI=$(xrandr | grep \ connected | awk '{ print $1 }' | grep DVI)
+HDMI=$(xrandr | grep \ connected | awk '{ print $1 }' | grep HDMI)
+
+case $1 in
+	hdmi_only)
+		xrandr --output "$DVI" --off --output "$HDMI" --primary --output "$HDMI" --mode 1920x1080
+	;;
+	dvi_only)
+		xrandr --output "$HDMI" --off --output "$DVI" --primary --output "$DVI" --mode 1920x1080
+	;;
+	both)
+		xrandr --output "$DVI" --auto --output "$DVI" --right-of "$HDMI" --output "$HDMI" --primary --output "$HDMI" --mode 1920x1080
+	;;
+	both_one_portrait)
+		xrandr --output "$DVI" --auto --rotate left --output "$DVI" --right-of "$HDMI" --output "$HDMI" --primary --output "$HDMI" --mode 1920x1080
+	;;
+	*)
+		echo "You must supply an argument"
+		echo "Options are:"
+		echo "	both_one_portrait"
+		echo "	both"
+		echo "	hdmi_only"
+		echo "	dvi_only"
+esac
