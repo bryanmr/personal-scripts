@@ -44,7 +44,7 @@ then
 	done
 
 	killall xdotool
-	killall clicker
+	killall my_clicker
 else
 	windowid=$(xdotool getactivewindow)
 	DoClick
