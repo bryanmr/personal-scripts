@@ -20,7 +20,7 @@ function DoClick {
 }
 
 killcount=0
-for i in $(pidof -x clicker)
+for i in $(pidof -x my_clicker)
 do
 	if [[ $i == "$$" ]]
 	then
@@ -33,7 +33,7 @@ done
 
 if [[ $killcount -gt 0 ]]
 then
-	for i in $(pidof -x clicker)
+	for i in $(pidof -x my_clicker)
 	do
 		if [[ $i == "$$" ]]
 	        then
