@@ -5,6 +5,8 @@
 
 steam &
 
+sleep 1
+
 # We wait for Steam network to come up
 # Try 30 times, since we might wait for an update
 for i in $(seq 1 30)
@@ -18,8 +20,6 @@ done
 
 # Runs a script that uses a single monitor
 my_xrandr hdmi_only
-
-sleep 1
 
 # Raise Steam window and then store which window is active
 wmctrl -a Steam
@@ -37,7 +37,7 @@ do
 	fi
 
 	sleep 1
-	echo "Steam window not available or not raised, try number $i"
+	echo "Steam Big Picture not available or not raised, attempt number $i"
 	wmctrl -a Steam
 	sleep .5
 	windowid=$(xdotool getactivewindow)
@@ -46,6 +46,11 @@ done
 # Sent two Return keystrokes to Steam window ID
 # One to skip intro, one to login first account
 # Echo success or fail
-xdotool key --window "$windowid" --delay 1000 --window "$windowid" Return key Return && 
-	echo "Script done, you should be logged in!" || 
+if [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Steam" ]]
+then
+	xdotool key --window "$windowid" --delay 1000 --window "$windowid" Return key Return || 
+		echo "xdotool exited oddly, did the window close?" && exit
+	echo "Script done, you should be logged in!"
+else
 	echo "Something went wrong, not doing anything!"
+fi

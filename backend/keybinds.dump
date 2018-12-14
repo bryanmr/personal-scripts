@@ -3,7 +3,7 @@ custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybin
 
 [custom-keybindings/custom2]
 binding='<Alt>s'
-command='steam-autologin'
+command='my_steam'
 name='Steam'
 
 [custom-keybindings/custom5]
