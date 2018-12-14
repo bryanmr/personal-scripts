@@ -2,21 +2,36 @@
 
 function DoClick {
 	if [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Realm Grinder" ]]
-       then
-               while true
-               do
-                       xdotool mousemove --sync --window "$windowid" 810 310 click --repeat 100 --delay 200 1 \
-                               mousemove --sync --window "$windowid" 800 300 click --repeat 100 --delay 200 1
-               done
-       elif [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Crush Crush" ]] # I run Crush Crush in 1440x900
-       then
-               while true
-               do
-                       xdotool mousemove --window "$windowid" 900 290 click 1 \
-			       #mousemove --window "$windowid" 400 625 click 1 \
-			       #mousemove --window "$windowid" 1350 290 click 1 --repeat 5
-               done
-       fi
+	then
+		while true
+		do
+			xdotool mousemove --sync --window "$windowid" 810 310 click --repeat 100 --delay 200 1 \
+				mousemove --sync --window "$windowid" 800 300 click --repeat 100 --delay 200 1
+		done
+	elif [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Crush Crush" ]] # I run Crush Crush in 1920x1080 windowed
+	then
+		mloc=$(xdotool getmouselocation | awk '{print $1}' | cut -d: -f2)
+		echo "Original mouse location detected as: $mloc"
+		if [[ $mloc -lt 950 ]]
+		then
+			xloc=580
+			yloc=780
+		else
+			xloc=1200
+			yloc=290
+		fi
+		while true
+		do
+			echo "xdotool mousemove --window $windowid $xloc $yloc click --repeat 10 1"
+			xdotool mousemove --window "$windowid" $xloc $yloc click --repeat 10 1
+		done
+	elif [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Crusaders of The Lost Idols" ]]
+	then
+		while true
+		do
+			xdotool click --repeat 100 --delay 50 1
+		done
+	fi
 }
 
 killcount=0
@@ -36,9 +51,9 @@ then
 	for i in $(pidof -x my_clicker)
 	do
 		if [[ $i == "$$" ]]
-	        then
-	                continue
-	        else
+		then
+			continue
+		else
 			kill "$i"
 		fi
 	done
@@ -50,7 +65,7 @@ else
 	DoClick
 	windowid=$(xdotool selectwindow)
 	DoClick
-        zenity --info --text "No clicker windows recognized" --title "Not Found"
-        exit
-        #while true; do xdotool click --repeat 1000 --delay 10 1; done
+	zenity --info --text "No clicker windows recognized" --title "Not Found"
+	exit
+	#while true; do xdotool click --repeat 1000 --delay 10 1; done
 fi
