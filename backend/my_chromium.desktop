@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Name=My Encrypted Chromium Web Browser
+GenericName=Web Browser
+Comment=Access the Internet with an encrypted profile
+Exec=my_chromium
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=chromium-browser
+Categories=Network;WebBrowser;
+MimeType=text/html;text/xml;application/xhtml_xml;x-scheme-handler/http;x-scheme-handler/https;
+StartupNotify=true
+X-AppInstall-Package=chromium-browser
