@@ -1,6 +1,17 @@
 #!/bin/bash
 
+# Currently supports:
+# Crush Crush
+# Realm Grinder
+# Crusaders of The Lost Idols
+
+# This script will do one of two things
+# 1. Start clicking if a game is supported
+# 2. Kill a previous clicker and exit
+
+# Function to actually perform the click
 function DoClick {
+	# We check to see the active windows name
 	if [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Realm Grinder" ]]
 	then
 		while true
@@ -10,6 +21,7 @@ function DoClick {
 		done
 	elif [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Crush Crush" ]] # I run Crush Crush in 1920x1080 windowed
 	then
+		# We get the mouse location and then detect if it is near the date or flirt button
 		mloc=$(xdotool getmouselocation | awk '{print $1}' | cut -d: -f2)
 		echo "Original mouse location detected as: $mloc"
 		if [[ $mloc -lt 950 ]]
@@ -20,6 +32,7 @@ function DoClick {
 			xloc=1200
 			yloc=290
 		fi
+
 		while true
 		do
 			echo "xdotool mousemove --window $windowid $xloc $yloc click --repeat 10 1"
@@ -34,6 +47,7 @@ function DoClick {
 	fi
 }
 
+# We need to see if other clickers are running
 killcount=0
 for i in $(pidof -x my_clicker)
 do
@@ -61,11 +75,11 @@ then
 	killall xdotool
 	killall my_clicker
 else
+	# If the active window is a supported one, go. Else, select one.
 	windowid=$(xdotool getactivewindow)
 	DoClick
 	windowid=$(xdotool selectwindow)
 	DoClick
 	zenity --info --text "No clicker windows recognized" --title "Not Found"
 	exit
-	#while true; do xdotool click --repeat 1000 --delay 10 1; done
 fi

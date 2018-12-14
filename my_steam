@@ -5,6 +5,12 @@
 
 steam &
 
+if pgrep -f steam.sh > /dev/null
+then
+	echo "Steam is already started. Since you lost it, we'll find it for you."
+	exit
+fi
+
 sleep 1
 
 # We wait for Steam network to come up
@@ -21,16 +27,16 @@ done
 # Runs a script that uses a single monitor
 my_xrandr hdmi_only
 
-# Raise Steam window and then store which window is active
-wmctrl -a Steam
-sleep .5
-windowid=$(xdotool getactivewindow)
-
 # Check if active window is steam
 # Sleep and then try to raise it if it is not
-# Try 15 times
-for i in $(seq 1 15)
+# Try 3 times
+for i in $(seq 1 3)
 do
+	# Raise Steam window and then store which window is active
+	wmctrl -a Steam
+	sleep .5
+	windowid=$(xdotool getactivewindow)
+
 	if [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Steam" ]]
 	then
 		break # Steam is raised
@@ -38,12 +44,9 @@ do
 
 	sleep 1
 	echo "Steam Big Picture not available or not raised, attempt number $i"
-	wmctrl -a Steam
-	sleep .5
-	windowid=$(xdotool getactivewindow)
 done
 
-# Sent two Return keystrokes to Steam window ID
+# Send two Return keystrokes to Steam window ID
 # One to skip intro, one to login first account
 # Echo success or fail
 if [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Steam" ]]
@@ -52,5 +55,5 @@ then
 		echo "xdotool exited oddly, did the window close?" && exit
 	echo "Script done, you should be logged in!"
 else
-	echo "Something went wrong, not doing anything!"
+	echo "Something went wrong, skipping automatic login for Steam Big Picture!"
 fi

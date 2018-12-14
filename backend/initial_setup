@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#Consider: sudo apt purge indicator-common
+
 if [[ $1 != "--I-understand" ]]
 then
 	echo "This can cause damage if not run on a fresh system."
@@ -12,7 +14,7 @@ fi
 if [[ "$(dconf read /org/gnome/desktop/screensaver/ubuntu-lock-on-suspend)" == "true" ]]
 then
 	echo "Setting the desktop to skip lock screen on resume."
-	read -p "Do you wish to Proceed? [Y/N] " answer
+	read -rp "Do you wish to Proceed? [Y/N] " answer
 	if [[ "$answer" == "Y" ]]
 	then
 		echo "Changing the setting to false!"
