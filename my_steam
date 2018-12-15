@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Assumes Steam starts in Big Picture
 # Requires wmctrl and xdotool to be installed
 
+# Check if Steam is already started
 if pgrep -f steam.sh > /dev/null
 then
 	echo "Steam is already started. Since you lost it, we'll find it for you."
