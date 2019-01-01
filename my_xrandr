@@ -3,12 +3,28 @@
 DVI=$(xrandr | grep \ connected | awk '{ print $1 }' | grep DVI)
 HDMI=$(xrandr | grep \ connected | awk '{ print $1 }' | grep HDMI)
 
+if [ "$(xrandr | grep -c " connected")" -lt 2 ]
+then
+	echo "You seem to only have 1 display connected, we are bailing out"
+	exit 1
+fi
+
 case $1 in
 	hdmi_only)
-		xrandr --output "$DVI" --off --output "$HDMI" --primary --output "$HDMI" --mode 1920x1080
+		if [ "$HDMI" != "" ]
+		then
+			xrandr --output "$DVI" --off --output "$HDMI" --primary --output "$HDMI" --mode 1920x1080
+		else
+			echo "We aren't running this since you have no HDMI display connected."
+		fi
 	;;
 	dvi_only)
-		xrandr --output "$HDMI" --off --output "$DVI" --primary --output "$DVI" --mode 1920x1080
+		if [ "$DVI" != "" ]
+		then
+			xrandr --output "$HDMI" --off --output "$DVI" --primary --output "$DVI" --mode 1920x1080
+		else
+			echo "We aren't running this since you have no DVI display connected."
+		fi
 	;;
 	both)
 		xrandr --output "$DVI" --auto --output "$DVI" --right-of "$HDMI" --output "$HDMI" --primary --output "$HDMI" --mode 1920x1080
