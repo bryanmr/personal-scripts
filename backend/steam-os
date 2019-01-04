@@ -1,7 +1,14 @@
 #!/bin/bash
 
+# We are guessing that whoever owns PulseAudio owns the display
+xuser=$(stat -c %U /proc/"$(pgrep -f pulseaudio)")
+echo "My steam-os: $xuser is the user we are going to use"
+
 case $1 in
 	pre)
+		# We assume that Alt-O is a keybind for setting the monitors down to a single HDMI input
+		sudo -u "$xuser" bash -c "export DISPLAY=:0 ; xdotool keydown Alt key o keyup Alt"
+
 		killall steam
 
 		# We wait for Steam to go away
@@ -11,7 +18,7 @@ case $1 in
 			if pgrep -f steam.sh > /dev/null
 			then
 				sleep 2
-				echo "$i time waiting for Steam to shutdown"
+				echo "My steam-os: $i time waiting for Steam to shutdown"
 			fi
 		done
 
@@ -22,17 +29,7 @@ case $1 in
 	post)
 		# If we don't sleep, things go wrong sometimes
 		# I wish I had a better way of doing this
-		sleep 1
-
-		# We are going to wait here until there is an X Server responding
-		while ! xset -q > /dev/null 2>&1
-		do
-			sleep 2
-			echo "There is no X server that we can connect to."
-		done
-
-		# We are guessing that whoever owns PulseAudio owns the display
-		xuser=$(stat -c %U /proc/"$(pgrep -f pulseaudio)")
+		sleep 3
 
 		# We assume that Alt-S is a keybind for launching Steam
 		sudo -u "$xuser" bash -c "export DISPLAY=:0 ; xdotool keydown Alt key s keyup Alt"
