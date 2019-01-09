@@ -1,0 +1,10 @@
+#!/bin/bash
+
+while true
+do
+	if [ ! "$(pgrep -f steam.sh)" ]
+	then
+		my_steam
+	fi
+	sleep 3
+done

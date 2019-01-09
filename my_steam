@@ -1,12 +1,19 @@
 #!/bin/bash
 
+# Since this runs in the background, capture everything to a log file
+#exec 1> >(logger -s -t "$(basename "$0")" 2>&1)
+#exec 2> >(logger -s -t "$(basename "$0")")
+
+# I run this oddly sometimes, need to make sure it is in the path
+PATH="/usr/games/:$PATH"
+
 # Requires wmctrl and xdotool to be installed
 
 # Check if Steam is already started
 if pgrep -f steam.sh > /dev/null
 then
 	echo "Steam is already started. Since you lost it, we'll find it for you."
-	steam &&
+	steam ||
 		exit 1
 	exit
 fi
@@ -14,8 +21,7 @@ fi
 # Fix for bug with Gnome Activities not allowing window switching with wmctrl
 dbus-send --session --type=method_call --dest=org.gnome.Shell /org/gnome/Shell org.gnome.Shell.Eval string:'Main.overview.hide();'
 
-#steam steam://open/bigpicture &
-steam &
+steam steam://open/bigpicture &
 
 sleep 1
 
@@ -39,6 +45,9 @@ do
 	if [ ! "$(wmctrl -a Steam)" ]
 	then
 		echo "Steam not raised by our command, may already have focus"
+
+		# We'll try to open Big Picture mode
+		steam steam://open/bigpicture &
 	fi
 
 	# Get active window and then see if it is Steam, otherwise loop again
@@ -67,6 +76,7 @@ then
 	xdotool key --window "$windowid" --delay 1000 --window "$windowid" Return key Return || 
 		echo "xdotool exited oddly, did the window close?" && exit 1
 	echo "Script done, you should be logged in!"
+	exit
 else
 	echo "Something went wrong, skipping automatic login for Steam Big Picture!"
 	echo "Our active window was $activewindow"

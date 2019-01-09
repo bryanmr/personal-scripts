@@ -6,32 +6,31 @@ echo "My steam-os: $xuser is the user we are going to use"
 
 case $1 in
 	pre)
-		# We assume that Alt-O is a keybind for setting the monitors down to a single HDMI input
-		sudo -u "$xuser" bash -c "export DISPLAY=:0 ; xdotool keydown Alt key o keyup Alt"
+		# Making it so only one monitor is on after we sleep, for better wakeup
+		sudo -u "$xuser" bash -c "export DISPLAY=:0 ; my_xrandr hdmi_only"
 
 		killall steam
 
 		# We wait for Steam to go away
-		# Try 5 times, since we might be waiting for cloud sync
-		for i in $(seq 1 5)
+		# Try 10 times, since we might be waiting for cloud sync
+		for i in $(seq 1 10)
 		do
 			if pgrep -f steam.sh > /dev/null
 			then
-				sleep 2
+				sleep 1
 				echo "My steam-os: $i time waiting for Steam to shutdown"
 			fi
 		done
 
-		sleep 1
-
 		killall -9 steam
+		echo "We reached the end, Steam should be closed."
 		;;
-	post)
-		# If we don't sleep, things go wrong sometimes
-		# I wish I had a better way of doing this
-		sleep 3
-
-		# We assume that Alt-S is a keybind for launching Steam
-		sudo -u "$xuser" bash -c "export DISPLAY=:0 ; xdotool keydown Alt key s keyup Alt"
-		;;
+#	post)
+#		# If we don't sleep, things go wrong sometimes
+#		# I wish I had a better way of doing this
+#		sleep 3
+#
+#		# We assume that Alt-S is a keybind for launching Steam
+#		sudo -u "$xuser" bash -c "export DISPLAY=:0 ; my_steam"
+#		;;
 esac
