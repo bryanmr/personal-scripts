@@ -1,0 +1,116 @@
+#!/bin/bash
+
+function pa_set
+{
+	case $1 in
+		sources)
+			ENG_OUT="Source"
+			;;
+		sinks)
+			ENG_OUT="Sink"
+			;;
+	esac
+
+	PACMD_SOURCES=$(pacmd list-"$1")
+	SOURCE_LIST=()
+	while read -r line
+	do
+		SOURCE_OUT=$(echo "$PACMD_SOURCES" | grep -A100 "$line" | grep 'device.description' | head -n1 | grep -vi monitor | cut -d\" -f2)
+		if [ "$SOURCE_OUT" == "" ]
+		then
+			continue
+		fi
+
+		SOURCE_OPTION="$line ~ $SOURCE_OUT"
+
+		if echo "$SOURCE_OPTION" | grep -q '^\*'
+		then
+			SOURCE_LIST=("${SOURCE_LIST[@]}" TRUE "$SOURCE_OPTION")
+		else
+			SOURCE_LIST=("${SOURCE_LIST[@]}" FALSE "$SOURCE_OPTION")
+		fi
+	done <<< "$(echo "$PACMD_SOURCES" | grep index:)"
+
+	# Setting the options into an array since this gets long otherwise
+	ZENITY_OPTIONS=(--width 600 --height 600 --list --text "Select Pulse Audio $ENG_OUT Configuration Change" --radiolist --column "Pick" --column "Select $ENG_OUT Device")
+	PULSE_CHOICE="$(zenity "${ZENITY_OPTIONS[@]}" "${SOURCE_LIST[@]}" \
+		2> >(grep -v -e 'GtkDialog' -e 'Theme parsing' -e '^$' >&2))"
+
+	if [ "$PULSE_CHOICE" == "" ]
+	then
+		echo "Cancelled"
+		return
+	fi
+
+	if echo "$PULSE_CHOICE" | grep -q '^\*'
+	then
+		echo "You selected the default $ENG_OUT so we are not changing anything"
+		return
+	fi
+
+	echo "Changing default $ENG_OUT to: $PULSE_CHOICE"
+
+	case $1 in
+		sources)
+			pacmd set-default-source "$(echo "$PULSE_CHOICE" | awk '{print $2}')"
+			;;
+		sinks)
+			pacmd set-default-sink "$(echo "$PULSE_CHOICE" | awk '{print $2}')"
+			;;
+	esac
+}
+
+ZENITY_OPTIONS=(--width 600 --height 600 --list --text "Pulse Audio Configuration Changes" --radiolist --column "Pick" --column "What to Do")
+OPTIONS=(TRUE "Do Nothing" FALSE "Change Input Source" FALSE "Change Output Sink"\
+	FALSE "Set Line-In Loopback Mode" FALSE "Disable Loopback")
+CHOICE="$(zenity "${ZENITY_OPTIONS[@]}" "${OPTIONS[@]}" \
+                2> >(grep -v -e 'GtkDialog' -e 'Theme parsing' -e '^$' >&2))"
+
+case $CHOICE in
+	"Change Input Source")
+		pa_set sources
+		;;
+	"Change Output Sink")
+		pa_set sinks
+		;;
+	"Disable Loopback")
+		pactl unload-module module-loopback
+		;;
+	"Set Line-In Loopback Mode")
+		PACMD_SOURCES=$(pacmd list-sources)
+		while read -r line
+		do
+			SOURCE_OUT=$(echo "$PACMD_SOURCES" | grep -A100 "$line" | grep 'device.description' | head -n1 | grep -i built-in | grep -vi monitor | cut -d\" -f2)
+			if [ "$SOURCE_OUT" == "" ]
+			then
+				continue
+			fi
+
+			if echo "$line" | grep '^\*' > /dev/null
+			then
+				echo "Default already set. Setting existing sources to: $SOURCE_OUT"
+				WHICH_SOURCE="$(echo "$line" | awk '{print $3}')"
+			else
+				echo "Changing default source to: $SOURCE_OUT"
+				WHICH_SOURCE="$(echo "$line" | awk '{print $2}')"
+				pacmd set-default-source "$WHICH_SOURCE"
+			fi
+
+			# Moving existing output sources
+			while read -r myoutput
+			do
+				if [ "$myoutput" == "" ]
+				then
+					continue
+				fi
+				echo "Moving output $myoutput to source $WHICH_SOURCE"
+				pacmd move-source-output "$myoutput" "$WHICH_SOURCE"
+			done <<< "$(pacmd list-source-outputs | grep -i index | awk '{print $2}')"
+			break
+		done <<< "$(echo "$PACMD_SOURCES" | grep index:)"
+		pactl load-module module-loopback > /dev/null
+		;;
+	*)
+		echo "We had an error, oops"
+		;;
+esac
