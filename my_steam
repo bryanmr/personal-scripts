@@ -23,32 +23,24 @@ dbus-send --session --type=method_call --dest=org.gnome.Shell /org/gnome/Shell o
 
 steam steam://open/bigpicture &
 
-sleep 1
-
 # We wait for Steam network to come up
-# Try 30 times, since we might wait for an update
-for i in $(seq 1 30)
+# Try 5 times, since we might wait for an update
+for i in $(seq 1 5)
 do
 	if ! netstat -lp 2>&1 | grep -i steam > /dev/null
 	then
-		sleep 2
+		sleep 1
 		echo "$i time waiting for Steam to start (Steam network ports not reserved)"
 	fi
 done
 
 # Check if active window is steam
-# Sleep and then try to raise it if it is not
-# Try 3 times
-for i in $(seq 1 3)
+# Sleep for 1 second and then try to raise it if it is not
+# Try 6 times
+for i in $(seq 1 6)
 do
-	# Raise Steam window and if fails we notify
-	if [ ! "$(wmctrl -a Steam)" ]
-	then
-		echo "Steam not raised by our command, may already have focus"
-
-		# We'll try to open Big Picture mode
-		steam steam://open/bigpicture &
-	fi
+	# Raise Steam window
+	wmctrl -a Steam
 
 	# Get active window and then see if it is Steam, otherwise loop again
 	windowid=$(xdotool getactivewindow)
@@ -60,7 +52,8 @@ do
 		break # Steam is raised
 	fi
 
-	sleep 2
+	#steam steam://open/bigpicture &
+	sleep 1
 	echo "Steam Big Picture not available or not raised, attempt number $i"
 done
 

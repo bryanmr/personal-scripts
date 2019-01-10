@@ -2,7 +2,9 @@
 
 while true
 do
-	if [ ! "$(pgrep -f steam.sh)" ]
+	if [ ! "$(pgrep -f steam.sh)" ] &&
+		[ "$(systemctl show --property=ActiveState systemd-suspend.service | cut -d= -f2)" == "inactive" ] &&
+		[ "$(systemctl show --property=ActiveState systemd-halt.service | cut -d= -f2)" == "inactive" ]
 	then
 		my_steam
 	fi
