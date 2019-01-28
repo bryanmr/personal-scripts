@@ -7,8 +7,6 @@
 # I run this oddly sometimes, need to make sure it is in the path
 PATH="/usr/games/:$PATH"
 
-# Requires wmctrl and xdotool to be installed
-
 # Check if Steam is already started
 if pgrep -f steam.sh > /dev/null
 then
@@ -21,11 +19,11 @@ fi
 # Fix for bug with Gnome Activities not allowing window switching with wmctrl
 dbus-send --session --type=method_call --dest=org.gnome.Shell /org/gnome/Shell org.gnome.Shell.Eval string:'Main.overview.hide();'
 
-steam steam://open/bigpicture &
+steam &
 
 # We wait for Steam network to come up
-# Try 5 times, since we might wait for an update
-for i in $(seq 1 5)
+# Try 10 times, since we might wait for an update
+for i in $(seq 1 10)
 do
 	if ! netstat -lp 2>&1 | grep -i steam > /dev/null
 	then
@@ -34,44 +32,4 @@ do
 	fi
 done
 
-# Check if active window is steam
-# Sleep for 1 second and then try to raise it if it is not
-# Try 6 times
-for i in $(seq 1 6)
-do
-	# Raise Steam window
-	wmctrl -a Steam
-
-	# Get active window and then see if it is Steam, otherwise loop again
-	windowid=$(xdotool getactivewindow)
-	activewindow="$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)"
-
-	if [[ "$activewindow" == "Steam" ]]
-	then
-		echo "We found Steam, it is our active window"
-		break # Steam is raised
-	fi
-
-	#steam steam://open/bigpicture &
-	sleep 1
-	echo "Steam Big Picture not available or not raised, attempt number $i"
-done
-
-# We'll get the active window again
-windowid=$(xdotool getactivewindow)
-activewindow="$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)"
-
-# Send two Return keystrokes to Steam window ID
-# One to skip intro, one to login first account
-# Echo success or fail
-if [[ "$activewindow" == "Steam" ]]
-then
-	xdotool key --window "$windowid" --delay 1000 --window "$windowid" Return key Return || 
-		echo "xdotool exited oddly, did the window close?" && exit 1
-	echo "Script done, you should be logged in!"
-	exit
-else
-	echo "Something went wrong, skipping automatic login for Steam Big Picture!"
-	echo "Our active window was $activewindow"
-	exit 1
-fi
+steam steam://open/bigpicture &
