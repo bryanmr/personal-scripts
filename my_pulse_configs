@@ -62,7 +62,7 @@ function pa_set
 
 ZENITY_OPTIONS=(--width 600 --height 600 --list --text "Pulse Audio Configuration Changes" --radiolist --column "Pick" --column "What to Do")
 OPTIONS=(TRUE "Do Nothing" FALSE "Change Input Source" FALSE "Change Output Sink"\
-	FALSE "Set Line-In Loopback Mode" FALSE "Disable Loopback")
+	FALSE "Set bluez Loopback Mode" FALSE "Disable Loopback")
 CHOICE="$(zenity "${ZENITY_OPTIONS[@]}" "${OPTIONS[@]}" \
                 2> >(grep -v -e 'GtkDialog' -e 'Theme parsing' -e '^$' >&2))"
 
@@ -76,11 +76,11 @@ case $CHOICE in
 	"Disable Loopback")
 		pactl unload-module module-loopback
 		;;
-	"Set Line-In Loopback Mode")
+	"Set bluez Loopback Mode")
 		PACMD_SOURCES=$(pacmd list-sources)
 		while read -r line
 		do
-			SOURCE_OUT=$(echo "$PACMD_SOURCES" | grep -A100 "$line" | grep 'device.description' | head -n1 | grep -i built-in | grep -vi monitor | cut -d\" -f2)
+			SOURCE_OUT=$(echo "$PACMD_SOURCES" | grep -A100 "$line" | grep 'device.api' | head -n1 | grep -i bluez | grep -vi monitor | cut -d\" -f2)
 			if [ "$SOURCE_OUT" == "" ]
 			then
 				continue
