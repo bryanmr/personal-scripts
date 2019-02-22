@@ -1,0 +1,2 @@
+git config --global commit.gpgsign true
+git config --global user.signingkey DEAD4BAFEC7AEDB8
