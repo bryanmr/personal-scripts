@@ -1,0 +1,3 @@
+#!/bin/bash
+mkdir -p "$HOME/.config/firefox-hidden/unencrypted/"
+firefox --profile "$HOME/.config/firefox-hidden/unencrypted/"

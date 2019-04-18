@@ -30,8 +30,8 @@ function DoClick {
 			xloc=580
 			yloc=780
 		else
-			xloc=1200
-			yloc=290
+			xloc=1180
+			yloc=310
 		fi
 
 		while true
