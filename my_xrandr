@@ -2,6 +2,21 @@
 
 DVI=$(xrandr | grep \ connected | awk '{ print $1 }' | grep DVI)
 HDMI=$(xrandr | grep \ connected | awk '{ print $1 }' | grep HDMI)
+DP=$(xrandr | grep \ connected | awk '{ print $1 }' | grep DisplayPort)
+
+case $2 in
+	hd)
+		RES="1920x1080"
+	;;
+	qhd)
+		RES="2560x1440"
+	;;
+	uhd)
+		RES="3840x2160"
+	;;
+	*)
+		RES="1920x1080"
+esac
 
 if [ "$(xrandr | grep -c " connected")" -lt 2 ]
 then
@@ -13,7 +28,15 @@ case $1 in
 	hdmi_only)
 		if [ "$HDMI" != "" ]
 		then
-			xrandr --output "$DVI" --off --output "$HDMI" --primary --output "$HDMI" --mode 1920x1080
+			xrandr --output "$DVI" --off --output "$HDMI" --primary --output "$HDMI" --mode "$RES"
+		else
+			echo "We aren't running this since you have no HDMI display connected."
+		fi
+	;;
+	dp_only)
+		if [ "$DP" != "" ]
+		then
+			xrandr --output "$DVI" --off --output "$HDMI" --off --output "$DP" --primary --output "$DP" --mode "$RES"
 		else
 			echo "We aren't running this since you have no HDMI display connected."
 		fi
@@ -27,10 +50,10 @@ case $1 in
 		fi
 	;;
 	both)
-		xrandr --output "$DVI" --auto --output "$DVI" --right-of "$HDMI" --output "$HDMI" --primary --output "$HDMI" --mode 1920x1080
+		xrandr --output "$DVI" --auto --output "$DVI" --right-of "$HDMI" --output "$HDMI" --primary --output "$HDMI" --mode 3840x2160
 	;;
 	both_one_portrait)
-		xrandr --output "$DVI" --auto --rotate left --output "$DVI" --right-of "$HDMI" --output "$HDMI" --primary --output "$HDMI" --mode 1920x1080
+		xrandr --output "$DVI" --auto --rotate left --output "$DVI" --right-of "$HDMI" --output "$HDMI" --primary --output "$HDMI" --mode 3840x2160
 	;;
 	*)
 		echo "You must supply an argument"

@@ -1,0 +1,6 @@
+# https://wiki.archlinux.org/index.php/AMDGPU
+# https://wiki.gentoo.org/wiki/AMDGPU
+
+echo "radeon.cik_support=0 amdgpu.cik_support=1" 
+echo "/etc/default/grub"
+echo "update-grub"
