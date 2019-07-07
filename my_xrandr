@@ -1,65 +1,109 @@
 #!/bin/bash
 
-DVI=$(xrandr | grep \ connected | awk '{ print $1 }' | grep DVI)
-HDMI=$(xrandr | grep \ connected | awk '{ print $1 }' | grep HDMI)
-DP=$(xrandr | grep \ connected | awk '{ print $1 }' | grep DisplayPort)
-
-case $2 in
-	hd)
-		RES="1920x1080"
-	;;
-	qhd)
-		RES="2560x1440"
-	;;
-	uhd)
-		RES="3840x2160"
-	;;
-	*)
-		RES="1920x1080"
-esac
-
 if [ "$(xrandr | grep -c " connected")" -lt 2 ]
 then
 	echo "You seem to only have 1 display connected, we are bailing out"
 	exit 1
 fi
 
+DVI=$(xrandr | grep \ connected | awk '{ print $1 }' | grep DVI)
+HDMI=$(xrandr | grep \ connected | awk '{ print $1 }' | grep HDMI)
+DP=$(xrandr | grep \ connected | awk '{ print $1 }' | grep DisplayPort)
+
+if [[ "$DP" != "" ]]
+then
+	main="$DP"
+else
+	main="$HDMI"
+fi
+
+if [ -z "$2" ]
+then
+	RES="1920x1080"
+else
+	case $2 in
+		hd)
+			RES="1920x1080"
+			;;
+		qhd)
+			RES="2560x1440"
+			;;
+		uhd)
+			RES="3840x2160"
+	esac
+fi
+
 case $1 in
-	hdmi_only)
+	hdmi_on)
 		if [ "$HDMI" != "" ]
 		then
-			xrandr --output "$DVI" --off --output "$HDMI" --primary --output "$HDMI" --mode "$RES"
+			xrandr --output "$HDMI" --mode "$RES"
 		else
 			echo "We aren't running this since you have no HDMI display connected."
 		fi
 	;;
-	dp_only)
+	hdmi_off)
+		if [ "$HDMI" != "" ]
+		then
+			xrandr --output "$HDMI" --off
+		else
+			echo "We aren't running this since you have no HDMI display connected."
+		fi
+	;;
+	dp_on)
 		if [ "$DP" != "" ]
 		then
-			xrandr --output "$DVI" --off --output "$HDMI" --off --output "$DP" --primary --output "$DP" --mode "$RES"
+			xrandr --output "$DP" --primary --output "$DP" --mode "$RES"
 		else
-			echo "We aren't running this since you have no HDMI display connected."
+			echo "We aren't running this since you have no DP display connected."
 		fi
 	;;
-	dvi_only)
+	dp_off)
+		if [ "$DP" != "" ]
+		then
+			xrandr --output "$DP" --off
+		else
+			echo "We aren't running this since you have no DP display connected."
+		fi
+	;;
+	dvi_on)
 		if [ "$DVI" != "" ]
 		then
-			xrandr --output "$HDMI" --off --output "$DVI" --primary --output "$DVI" --mode 1920x1080
+			xrandr --output "$DVI" --mode "$RES" --right-of "$main"
 		else
 			echo "We aren't running this since you have no DVI display connected."
 		fi
 	;;
-	both)
-		xrandr --output "$DVI" --auto --output "$DVI" --right-of "$HDMI" --output "$HDMI" --primary --output "$HDMI" --mode 3840x2160
+	dvi_off)
+		if [ "$DVI" != "" ]
+		then
+			xrandr --output "$DVI" --off
+		else
+			echo "We aren't running this since you have no DVI display connected."
+		fi
 	;;
-	both_one_portrait)
-		xrandr --output "$DVI" --auto --rotate left --output "$DVI" --right-of "$HDMI" --output "$HDMI" --primary --output "$HDMI" --mode 3840x2160
+	dvi_portrait)
+		xrandr --output "$DVI" --auto --rotate left --output "$DVI" --right-of "$main"
 	;;
 	*)
-		echo "You must supply an argument"
+		echo "This script assumes three monitors are connected."
+		echo "Unexpected behavior may occur when disabling the display port device."
+		echo ""
+		echo "You must supply an argument."
 		echo "Options are:"
-		echo "	both_one_portrait"
-		echo "	both"
-		echo "	hdmi_only"
-		echo "	dvi_only"
+		echo "	hdmi_on"
+		echo "	hdmi_off"
+		echo "	dp_on"
+		echo "	dp_off"
+		echo "	dvi_on"
+		echo "	dvi_off"
+		echo "	dvi_portrait"
+		echo ""
+		echo "To change resolution, provide a second option:"
+		echo "	 hd"
+		echo "	 qhd"
+		echo "	 uhd"
+		echo ""
+		echo "Example:"
+		echo "	./my_xrandr hdmi_on uhd"
 esac
