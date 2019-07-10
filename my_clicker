@@ -12,7 +12,7 @@
 # Function to actually perform the click
 function DoClick {
 	# We check to see the active windows name
-	if [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Realm Grinder" ]]
+	if [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b20-1000)" == "Realm Grinder" ]]
 	then
 		while true
 		do
@@ -20,18 +20,18 @@ function DoClick {
 				mousemove --sync --window "$windowid" 800 300 click --repeat 100 --delay 200 1
 		done
 		exit
-	elif [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Crush Crush" ]] # I run Crush Crush in 1920x1080 windowed
+	elif [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b20-1000)" == "Crush Crush" ]] # I run Crush Crush in 4k full screen
 	then
 		# We get the mouse location and then detect if it is near the date or flirt button
 		mloc=$(xdotool getmouselocation | awk '{print $1}' | cut -d: -f2)
 		echo "Original mouse location detected as: $mloc"
-		if [[ $mloc -lt 950 ]]
+		if [[ $mloc -lt 1900 ]]
 		then
-			xloc=580
-			yloc=780
+			xloc=1144
+			yloc=1540
 		else
-			xloc=1180
-			yloc=310
+			xloc=2320
+			yloc=666
 		fi
 
 		while true
@@ -40,7 +40,7 @@ function DoClick {
 			xdotool mousemove --window "$windowid" $xloc $yloc click --repeat 10 1
 		done
 		exit
-	elif [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b19-1000)" == "Crusaders of The Lost Idols" ]]
+	elif [[ "$(wmctrl -l | grep "$(printf '0x0%x' "$windowid")" | cut -b20-1000)" == "Crusaders of The Lost Idols" ]]
 	then
 		while true
 		do
