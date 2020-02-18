@@ -1,5 +1,8 @@
 #!/bin/bash
 
+POSITION="--above"
+#POSITION="--right-of"
+
 if [ "$(xrandr | grep -c " connected")" -lt 2 ]
 then
 	echo "You seem to only have 1 display connected, we are bailing out"
@@ -69,7 +72,7 @@ case $1 in
 	dvi_on)
 		if [ "$DVI" != "" ]
 		then
-			xrandr --output "$DVI" --mode "$RES" --right-of "$main"
+			xrandr --output "$DVI" --mode "$RES" "$POSITION" "$main"
 		else
 			echo "We aren't running this since you have no DVI display connected."
 		fi
@@ -83,7 +86,7 @@ case $1 in
 		fi
 	;;
 	dvi_portrait)
-		xrandr --output "$DVI" --auto --rotate left --output "$DVI" --right-of "$main"
+		xrandr --output "$DVI" --auto --rotate left --output "$DVI" "$POSITION" "$main"
 	;;
 	*)
 		echo "This script assumes three monitors are connected."
