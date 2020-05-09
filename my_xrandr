@@ -1,7 +1,7 @@
 #!/bin/bash
 
-POSITION="--above"
-#POSITION="--right-of"
+#POSITION="--above"
+POSITION="--right-of"
 
 if [ "$(xrandr | grep -c " connected")" -lt 2 ]
 then
@@ -72,7 +72,10 @@ case $1 in
 	dvi_on)
 		if [ "$DVI" != "" ]
 		then
-			xrandr --output "$DVI" --mode "$RES" "$POSITION" "$main"
+			for i in $DVI
+			do
+				xrandr --output "$i" --mode "$RES" "$POSITION" "$main"
+			done
 		else
 			echo "We aren't running this since you have no DVI display connected."
 		fi
@@ -80,7 +83,10 @@ case $1 in
 	dvi_off)
 		if [ "$DVI" != "" ]
 		then
-			xrandr --output "$DVI" --off
+			for i in $DVI
+			do
+				xrandr --output "$i" --off
+			done
 		else
 			echo "We aren't running this since you have no DVI display connected."
 		fi
