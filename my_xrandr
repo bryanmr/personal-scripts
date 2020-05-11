@@ -40,7 +40,7 @@ case $1 in
 	hdmi_on)
 		if [ "$HDMI" != "" ]
 		then
-			xrandr --output "$HDMI" --mode "$RES"
+			xrandr --output "$HDMI" --mode "$RES" --same-as "$main"
 		else
 			echo "We aren't running this since you have no HDMI display connected."
 		fi
