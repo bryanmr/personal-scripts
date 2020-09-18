@@ -92,7 +92,15 @@ case $1 in
 		fi
 	;;
 	dvi_portrait)
-		xrandr --output "$DVI" --auto --rotate left --output "$DVI" "$POSITION" "$main"
+		if [ "$DVI" != "" ]
+		then
+			for i in $DVI
+			do
+				xrandr --output "$DVI" --auto --rotate left --output "$DVI" "$POSITION" "$main"
+			done
+		else
+			echo "We aren't running this since you have no DVI display connected."
+		fi
 	;;
 	*)
 		echo "This script assumes three monitors are connected."
