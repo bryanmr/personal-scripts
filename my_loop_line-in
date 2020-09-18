@@ -1,0 +1,11 @@
+#!/bin/bash
+LOOPSOURCE='alsa_input.pci-0000_00_14.2.analog-stereo'
+LOADED=$(pactl list modules | grep -B2 $LOOPSOURCE | head -n1 | cut -d\# -f2)
+if [[ ! -z "$LOADED" && $LOADED -ge 0 ]]
+then
+  pactl unload-module $LOADED
+  echo Unloaded $LOOPSOURCE loopback, PA module number $LOADED
+else
+  pactl load-module module-loopback source=$LOOPSOURCE
+  echo Loaded $LOOPSOURCE loopback
+fi
